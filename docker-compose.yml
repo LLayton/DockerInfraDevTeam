@@ -10,6 +10,7 @@ services:
     volumes:
       - ./heimdall:/config
     restart: unless-stopped
+
   swag:
     image: lscr.io/linuxserver/swag
     container_name: swag
@@ -29,4 +30,14 @@ services:
       - 443:443
       - 80:80
     restart: unless-stopped
-  
+
+
+  awslaravel:
+    build:
+      context: ./awsLaravel
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "82:81"
+    volumes:
+      - ./awsLaravel/laravel:/var/www/html
