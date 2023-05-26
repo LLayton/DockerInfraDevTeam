@@ -10,7 +10,8 @@ services:
     volumes:
       - ./heimdall:/config
     restart: unless-stopped
-
+    networks:
+      - phpmyadmin
   swag:
     image: lscr.io/linuxserver/swag
     container_name: swag
@@ -30,7 +31,8 @@ services:
       - 443:443
       - 80:80
     restart: unless-stopped
-
+    networks:
+      - phpmyadmin
 
   awslaravel:
     build:
@@ -41,3 +43,56 @@ services:
       - "82:81"
     volumes:
       - ./awsLaravel/laravel:/var/www/html
+
+  db_dev:
+    image: mariadb
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456789
+    volumes:
+      - db_dev_data:/var/lib/mysql
+    networks:
+      - db_network
+
+  db_test:
+    image: mariadb
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456789
+    volumes:
+      - db_test_data:/var/lib/mysql
+    networks:
+      - db_network
+
+  db_prod:
+    image: mariadb
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456789
+    volumes:
+      - db_prod_data:/var/lib/mysql
+    networks:
+      - db_network
+
+  phpmyadmin:
+  
+    image: lscr.io/linuxserver/phpmyadmin:latest
+    restart: always
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+      - PMA_ARBITRARY=1 #optional
+      - PMA_ABSOLUTE_URI=https://phpmyadmin.example.com #optional    volumes:
+
+    networks:
+      - db_network
+      - phpmyadmin
+      
+networks:
+  db_network:
+  phpmyadmin:
+volumes:
+  db_dev_data:
+  db_test_data:
+  db_prod_data:
