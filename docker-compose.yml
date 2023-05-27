@@ -92,9 +92,9 @@ services:
     image: osixia/openldap:1.5.0
     container_name: ldap
     environment:
-      - LDAP_ORGANISATION=My Organization
-      - LDAP_DOMAIN=mydomain.com
-      - LDAP_ADMIN_PASSWORD=ldapadminpassword
+      - LDAP_ORGANISATION=lyestest
+      - LDAP_DOMAIN=lyestest.com
+      - LDAP_ADMIN_PASSWORD=123456789
     volumes:
       - ldap_data:/var/lib/ldap
       - ldap_config:/etc/ldap/slapd.d
@@ -104,7 +104,7 @@ services:
 
   ldap_gui:
     image: osixia/phpldapadmin:0.9.0
-    container_name: ldap_gui
+    container_name: lldap
     depends_on:
       - ldap
     environment:
@@ -116,6 +116,23 @@ services:
     networks:
       - db_network
 
+  nextcloud:
+    image: nextcloud
+    container_name: nextcloud
+    ports:
+      - 1000:80
+    restart: unless-stopped
+    volumes:
+       - ./nextcloud:/var/www/html
+    environment:
+      - MYSQL_HOST=db_dev
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextcloud
+      - MYSQL_PASSWORD=123456789
+    depends_on:
+      - db_dev
+    networks:
+      - db_network
 networks:
   db_network:
   phpmyadmin:
