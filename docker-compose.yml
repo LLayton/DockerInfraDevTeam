@@ -88,7 +88,34 @@ services:
     networks:
       - db_network
       - phpmyadmin
-      
+  ldap:
+    image: osixia/openldap:1.5.0
+    container_name: ldap
+    environment:
+      - LDAP_ORGANISATION=My Organization
+      - LDAP_DOMAIN=mydomain.com
+      - LDAP_ADMIN_PASSWORD=ldapadminpassword
+    volumes:
+      - ldap_data:/var/lib/ldap
+      - ldap_config:/etc/ldap/slapd.d
+    restart: unless-stopped
+    networks:
+      - db_network
+
+  ldap_gui:
+    image: osixia/phpldapadmin:0.9.0
+    container_name: ldap_gui
+    depends_on:
+      - ldap
+    environment:
+      - PHPLDAPADMIN_LDAP_HOSTS=ldap
+      - PHPLDAPADMIN_HTTPS=false
+    ports:
+      - 83:80
+    restart: unless-stopped
+    networks:
+      - db_network
+
 networks:
   db_network:
   phpmyadmin:
@@ -96,3 +123,5 @@ volumes:
   db_dev_data:
   db_test_data:
   db_prod_data:
+  ldap_data:
+  ldap_config:
