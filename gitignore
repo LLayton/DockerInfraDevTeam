@@ -1,0 +1,5 @@
+# Ignore le dossier spécifique
+/nextcloud/
+
+# Ignore les fichiers de sauvegarde
+*~
